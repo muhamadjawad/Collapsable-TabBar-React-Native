@@ -6,7 +6,7 @@ export default function Item(props) {
   return (
     <View
       style={{
-        backgroundColor: 'pink',
+        backgroundColor: 'cyan',
         // justifyContent: 'cent
         height: height(15),
         // width: width(100),

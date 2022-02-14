@@ -63,14 +63,8 @@ const TabScene = ({
 
 const CollapsibleTabView = props => {
   const [tabIndex, setIndex] = useState(0);
-  const [routes] = useState([
-    {key: 'tab1', title: 'Tab1'},
-    {key: 'tab2', title: 'Tab2'},
-    {key: 'tab3', title: 'Tab3'},
-    {key: 'tab4', title: 'Tab4'},
-    {key: 'tab5', title: 'Tab5'},
-  ]);
-  const [tab1Data] = useState(Array(40).fill(0));
+  const [routes] = useState(props.tabNames);
+  const [tab1Data] = useState(Array(40).fill(2));
   const [tab2Data] = useState(Array(30).fill(0));
   const [tab3Data] = useState(Array(30).fill(0));
   const [tab4Data] = useState(Array(30).fill(0));
@@ -141,7 +135,11 @@ const CollapsibleTabView = props => {
       extrapolateRight: 'clamp',
     });
     return (
-      <Animated.View style={[styles.header, {transform: [{translateY: y}]}]}>
+      <Animated.View
+        style={[
+          styles.header,
+          {height: HeaderHeight, transform: [{translateY: y}]},
+        ]}>
         {props.renderHeader}
       </Animated.View>
     );
@@ -207,10 +205,12 @@ const CollapsibleTabView = props => {
   };
 
   const renderScene = ({route}) => {
-    const focused = route.key === routes[tabIndex].key;
+    console.log('route==>', route);
     let numCols;
     let data;
-    let renderItem;
+
+    const windowHeight = Dimensions.get('window').height;
+
     switch (route.key) {
       case 'tab1':
         numCols = 2;
@@ -243,25 +243,28 @@ const CollapsibleTabView = props => {
         return null;
     }
     return (
-      <TabScene
-        numCols={numCols}
-        data={data}
-        renderItem={renderItem}
-        scrollY={scrollY}
+      <Animated.FlatList
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {
+            useNativeDriver: true,
+          },
+        )}
         onMomentumScrollBegin={onMomentumScrollBegin}
         onScrollEndDrag={onScrollEndDrag}
         onMomentumScrollEnd={onMomentumScrollEnd}
-        onGetRef={ref => {
-          if (ref) {
-            const found = listRefArr.current.find(e => e.key === route.key);
-            if (!found) {
-              listRefArr.current.push({
-                key: route.key,
-                value: ref,
-              });
-            }
-          }
+        ItemSeparatorComponent={() => <View style={{height: 10}} />}
+        ListHeaderComponent={() => <View style={{height: 10}} />}
+        contentContainerStyle={{
+          paddingTop: HeaderHeight + TabBarHeight,
+          paddingHorizontal: 10,
+          minHeight: windowHeight - TabBarHeight,
         }}
+        showsHorizontalScrollIndicator={false}
+        data={props.tabsData[route.key]}
+        renderItem={props.renderComponent}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item, index) => index.toString()}
       />
     );
   };
@@ -327,7 +330,7 @@ const CollapsibleTabView = props => {
 const styles = StyleSheet.create({
   header: {
     top: 0,
-    height: HeaderHeight,
+
     width: '100%',
     backgroundColor: '#40C4FF',
     alignItems: 'center',
@@ -335,7 +338,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   label: {fontSize: 16, color: '#222'},
-  tab: {elevation: 0, shadowOpacity: 0, backgroundColor: '#FFCC80'},
+  tab: {elevation: 0, shadowOpacity: 0, backgroundColor: 'white'},
   indicator: {backgroundColor: '#222'},
 });
 
