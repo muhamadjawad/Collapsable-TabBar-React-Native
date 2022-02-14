@@ -2,6 +2,8 @@
 
 The code shows the collapsable tabbar in react native.
 
+https://user-images.githubusercontent.com/50518179/153824355-d56d9b6e-c66d-434c-80e2-9066cc181dff.mp4
+
 ## Guide and Installation
 
 first clone the repository and run
@@ -11,6 +13,9 @@ npm install --save --legacy-peer-deps
 ```
 
 and run
+
+
+
 
 ```
 npx react-native run-android
